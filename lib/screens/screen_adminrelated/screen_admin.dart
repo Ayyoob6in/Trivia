@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/db/db_helper.dart';
+import 'package:travel_app/jasonModel/package.dart';
+import 'package:travel_app/screens/screen_adminrelated/scree_signed_user.dart';
 import 'package:travel_app/screens/screen_adminrelated/screen_add_package.dart';
-import 'package:travel_app/screens/screen_userrelated/screen_package_related.dart';
 import 'package:travel_app/screens/login_signup/screen_login.dart';
-import 'package:travel_app/screens/models/allmodels.dart';
+import 'package:travel_app/screens/screen_adminrelated/screen_edit_packages.dart';
 import 'package:travel_app/utils/lists.dart';
 
 class ScreenAdmin extends StatefulWidget {
@@ -18,14 +21,31 @@ class _ScreenAdminState extends State<ScreenAdmin> {
 int selectedChipIndex = 0;
 late List<bool> isIconChangedList;
 List<bool> isSelected = List.generate(7, (index) => false);
+List<Package> packages=[];
+List<Package> filterPackage=[];
+
+fetchAllPackages()async{
+  packages= await DatabaseHelper().getAllPackages();
+  setState(() {
+    filterPackage = List.from(packages);
+  });
+
+}
+
+delete(int packageId)async{
+  await DatabaseHelper().deletePackage(packageId);
+  fetchAllPackages();
+}
 
 
   @override
   void initState() {
+    fetchAllPackages();
     super.initState();
     setState(() {
-      selectedChipIndex = 0;
-      isSelected = List.generate(chipLabels.length, (i) => i == 0);
+     isSelected = List.generate(chipLabels.length, (i) => i==selectedChipIndex);
+     selectedChipIndex = 0;
+     filterPackage = List.from(packages);
     });
   }
   @override
@@ -72,18 +92,18 @@ List<bool> isSelected = List.generate(7, (index) => false);
                 text: const Text('Add Packages'),
                 bgcolor: Colors.green,
                 ontap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AddPackages()));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AddPackages( )));
                 },
               ),
               drawerSection(
                 icon: IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.view_array, size: 20, color: Colors.white),
+                  icon: const Icon(Icons.person, size: 20, color: Colors.white),
                 ),
-                text: const Text('Show all Packages'),
-                bgcolor: Colors.pink,
+                text: const Text('Show all users'),
+                bgcolor: Colors.indigo,
                 ontap: () {
-                //  Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllPackages(imageUrl:ImageDetails(imageUrl[selectedChipIndex][index], imagepackageDetails, , packagePrize) , placeName: placeName)));
+                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenSignedUsers()));
                 },
               ),
               drawerSection(
@@ -115,14 +135,14 @@ List<bool> isSelected = List.generate(7, (index) => false);
                 Text('not a clock', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500)),
               ],
             ),
-            const SizedBox(height: 15),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15 )),
-                suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.search, size: 28)),
-                hintText: 'search here',
-              ),
-            ),
+            // const SizedBox(height: 15), 
+            // TextField(
+            //   decoration: InputDecoration(
+            //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(15 )),
+            //     suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.search, size: 28)),
+            //     hintText: 'search here',
+            //   ),
+            // ),
              SizedBox(
               height: MediaQuery.of(context).size.height*.08,
                child: ListView(
@@ -135,14 +155,16 @@ List<bool> isSelected = List.generate(7, (index) => false);
                        ),
                        backgroundColor: isSelected[index]?Colors.purple[300]: Colors.blue[200],
                      onPressed: () {
-                      
+                      filterPackage=packages.where((package) => package.category==chipLabels[index]).toList();
                       setState(() {
                         if(index==0){
-                        isSelected=List.generate(chipLabels.length, (i) => i==0) ;
-                        selectedChipIndex=0;
+                        isSelected = List.generate(chipLabels.length, (i) => i == index);
+                        filterPackage = List.from(packages); // Show all package
+                        selectedChipIndex=index;
                       }else{
                         selectedChipIndex=index;
                         isSelected=List.generate(chipLabels.length, (i) => i==index) ;
+                        filterPackage = packages.where((package) => package.category == chipLabels[index]).toList();
                       }
                       });
                       
@@ -162,7 +184,7 @@ List<bool> isSelected = List.generate(7, (index) => false);
                   crossAxisSpacing: 5.0,
                   mainAxisSpacing: 5.0,
                     ),
-                    itemCount:imageUrl[selectedChipIndex].length ,
+                    itemCount:filterPackage.length,
                 itemBuilder: (context, index) {
                  return Stack(
                  fit: StackFit.passthrough,
@@ -170,47 +192,71 @@ List<bool> isSelected = List.generate(7, (index) => false);
                    borderRadius: BorderRadius.circular(10),
                    child: GestureDetector(
                     onTap: () {
-                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PackageDetails(details: ImageDetails(
-                          imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index]
-                          ),
-                         currentIndex: index,
-                         imagePackageDetails:ImageDetails(
-                          imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index]
-                               
-                          ), 
-                          packageInformation: ImageDetails(
-                          imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index]             
-                           ) ,
-                           packagePrize: ImageDetails(
-                            imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index] 
-                           ),
-                           ),
-                           ),
-                           );
                     },
-                    child: Image.network(imageUrl[selectedChipIndex][index],fit: BoxFit.cover,))
+                    child: Image.file(File(filterPackage[index].imageUrl),fit: BoxFit.cover,))
                    ),
-                   Positioned(
+                    Positioned(
                      bottom: 10,
                      left: 5 ,
-                     child:Text(imagepackagDetails[selectedChipIndex][index],
+                     child:Text(filterPackage[index].name,
                      style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.w200 
                      ),)
+                     ),
+                     Positioned(
+                     bottom: 1 ,
+                     right: 5 ,
+                     child:IconButton(
+                      onPressed: (){
+                         showDialog(
+                         context: context,
+                         builder: (BuildContext context) {
+                         return AlertDialog(
+                          backgroundColor: Colors.black45,  
+                         title: const Text("Delete Package",),
+                         titleTextStyle: const TextStyle(color: Colors.white,fontSize: 15),
+                         content: const Text("Are you sure you want to delete this package?"),
+                         contentTextStyle: const TextStyle(color: Colors.white),
+                         actions: [
+                         TextButton(
+                         onPressed: () {
+                         Navigator.of(context).pop();
+                         },
+                         child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                         onPressed: () {
+                            delete(filterPackage[index].packageId !);
+                            Navigator.of(context).pop();
+                           },
+                           child: const Text("Delete",style: TextStyle(color: Colors.red),),
+                        ),
+                       ],
+                      );
+                    },);
+                        
+                        
+
+                      },
+                       icon:const Icon(Icons.delete,color: Colors.red,)
+                       )
+                     ),
+                     Positioned(
+                     bottom: 0,
+                     right: 40,
+                     child:IconButton(
+                      onPressed: () async {
+                      Package updatedPackage = await Navigator.of(context).push(
+                       MaterialPageRoute(
+                       builder: (context) => ScreenEditPackages(editPackage: filterPackage[index]),
+                       ),
+                       );
+                       debugPrint('Updated Package Name: ${updatedPackage.name}');
+                    },
+                       icon:const Icon(Icons.edit,color: Colors.blue,)
+                       )
                      ),
                    ]
                  );
@@ -226,11 +272,12 @@ List<bool> isSelected = List.generate(7, (index) => false);
     );
   }
 
-  Future<void> _logout() async {
-    Navigator.of(context as BuildContext).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
-  }
-
+ Future<void> _logout(BuildContext context) async {
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => const LoginScreen()),
+    (route) => false,
+  );
+}
   Future<void>_showAlertDialog(BuildContext context)async{
     return showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
@@ -245,7 +292,8 @@ List<bool> isSelected = List.generate(7, (index) => false);
         TextButton(onPressed: ()async{
          final sharedprefs = await SharedPreferences.getInstance();
          await sharedprefs.clear();
-         _logout();
+         // ignore: use_build_context_synchronously
+         _logout(context);
         }, child:const Text("Yes",style: TextStyle(
           color: Colors.red
         ),))
@@ -270,6 +318,18 @@ List<bool> isSelected = List.generate(7, (index) => false);
       title: text,
     );
   } 
+  Future<Package> navigateToEditScreen(Package package) async {
+  // Use Navigator to navigate to the edit screen
+  Package? updatedPackage = await Navigator.of(context).push<Package>(
+    MaterialPageRoute(
+      builder: (context) => ScreenEditPackages(editPackage: package),
+    ),
+  );
+
+  // Return the updated package (or the original one if not updated)
+  return updatedPackage ?? package;
+}
+
  
 }
   

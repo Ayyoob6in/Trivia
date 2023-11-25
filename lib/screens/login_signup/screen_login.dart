@@ -104,10 +104,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           focusedErrorBorder: OutlineInputBorder(borderSide:const BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.circular(20),)
                       ),
+                      onSaved: (value) {
+                        _username.text=value?.trim() ?? '';
+                      },
                       onChanged: (value) {
                         setState(() {
-                          if(error){
+                          if(error||isLogin){
                             error=false;
+                            isLogin=false;
                           }
                         });
                       },
@@ -150,10 +154,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         }, icon:const Icon(Icons.visibility,)),
                         suffixIconColor: Colors.blue,
                       ),
+                      onSaved: (value) {
+                        _userPassword.text=value?.trim()??'';
+                      },
                       onChanged: (value) {
                         setState(() {
-                          if(error){
+                          if(error||isLogin){
                             error=false;
+                            isLogin=false;
                           }
                         });
                       },

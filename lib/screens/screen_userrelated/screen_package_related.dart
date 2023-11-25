@@ -1,20 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:travel_app/screens/models/allmodels.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:travel_app/jasonModel/package.dart';
+import 'package:travel_app/screens/screen_userrelated/scree_experience.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_plan.dart';
 
 class PackageDetails extends StatefulWidget {
-  final ImageDetails details;
-  final ImageDetails imagePackageDetails;
-  final ImageDetails packageInformation;
-  final ImageDetails packagePrize;
-  final int currentIndex;
+  final Package package;
 
   const PackageDetails({
     super.key,
-    required this.details,
-    required this.currentIndex,
-    required this.imagePackageDetails,
-    required this.packageInformation,
-    required this.packagePrize
+    required this.package
     });
 
   @override
@@ -24,6 +21,7 @@ class PackageDetails extends StatefulWidget {
 class _PackageDetailsState extends State<PackageDetails> {
   @override
   Widget build(BuildContext context) {
+    print('${widget.package.name}${widget.package.category}');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -36,7 +34,7 @@ class _PackageDetailsState extends State<PackageDetails> {
           Navigator.of(context).pop();
         }, icon:const Icon(Icons.arrow_back_ios)),
       ),
-      body: Column(
+      body: ListView(
         children: [
           Container(
             color: Colors.white24,
@@ -49,18 +47,20 @@ class _PackageDetailsState extends State<PackageDetails> {
                     width:MediaQuery.of(context).size.height*.40,
                     child: ClipRRect(
                 borderRadius: BorderRadius.circular(20 ),
-                child: Image.network(widget.details.imageUrl,fit: BoxFit.cover,
+                child: InstaImageViewer(
+                  child: Image.file(File(widget.package.imageUrl),fit: BoxFit.cover,
+                  ),
                 ),
                 ),
                 ),
               const SizedBox(height: 10,), 
-                Text(widget.imagePackageDetails.imagepackageDetails,style: const TextStyle(
+                Text(widget.package.name,style: const TextStyle(
                   fontWeight: FontWeight.bold,fontSize: 20,color: Colors.blue),
                   ),
                  const SizedBox(height: 5,),
                  const Text("Description",style: TextStyle(fontSize: 22),),
                  const SizedBox(height: 7,),
-                 Text(widget.imagePackageDetails.packageInformation,style:const TextStyle(wordSpacing: 2.5),),
+                 Text(widget.package.description,style:const TextStyle(wordSpacing: 2.5),),
                 const SizedBox(height: 30,),
                  Center(
                    child: Container(
@@ -76,7 +76,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                           "Experiences",style: TextStyle(color: Color.fromARGB(255, 92, 176, 244)),),
                           ),
                           onTap: (){
-
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ScreenExperience(package: widget.package)));
                           },
                     ),
                    ),
@@ -102,7 +102,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                     children: [
                       const Text("Total Price",style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),),
                       const SizedBox(height: 5,),
-                      Text("₹${widget.imagePackageDetails.packagePrize}",style: const TextStyle(fontSize: 20,fontWeight: FontWeight.w900,color: Colors.black),)
+                      Text("₹ ${widget.package.prize}",style: const TextStyle(fontSize: 20,fontWeight: FontWeight.w900,color: Colors.black),)
                     ],
                   ),
                   Padding(
@@ -124,8 +124,10 @@ class _PackageDetailsState extends State<PackageDetails> {
                       height: 50,
                       width: 100,
                       child: TextButton(
-                        onPressed: (){},
-                        child: const Center(child: Text("Book Now",style: TextStyle(fontWeight: FontWeight.w800),)),
+                        onPressed: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ScreenPlan()));
+                        },
+                        child: const Center(child: Text("Plan Now",style: TextStyle(fontWeight: FontWeight.w800),)),
                       ),
                     ),
                   )
@@ -138,4 +140,5 @@ class _PackageDetailsState extends State<PackageDetails> {
       ),
     );
   }
+  
 }

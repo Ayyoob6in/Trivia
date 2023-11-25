@@ -5,7 +5,8 @@ import 'package:travel_app/screens/startup_splash/screen_splash.dart';
 const saveKey='UserLoggedIn';
 const adminKey="adminLoggedIn";
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {

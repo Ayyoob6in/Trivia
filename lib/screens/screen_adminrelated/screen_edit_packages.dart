@@ -7,15 +7,15 @@ import 'package:travel_app/jasonModel/package.dart';
 import 'package:travel_app/screens/screen_adminrelated/screen_admin.dart';
 import 'package:travel_app/utils/lists.dart';
 
-class AddPackages extends StatefulWidget {
-   
-  const AddPackages({super.key,});
+class ScreenEditPackages extends StatefulWidget {
+  const ScreenEditPackages({super.key,required this.editPackage});
+  final Package editPackage;
 
   @override
-  State<AddPackages> createState() => _AddPackagesState();
+  State<ScreenEditPackages> createState() => _ScreenEditPackagesState();
 }
 
-class _AddPackagesState extends State<AddPackages> {
+class _ScreenEditPackagesState extends State<ScreenEditPackages> {
   final _formKey = GlobalKey<FormState>();
   final _packageNameController = TextEditingController();
   final _packageDescriptionController = TextEditingController();
@@ -24,14 +24,21 @@ class _AddPackagesState extends State<AddPackages> {
   XFile? _image;
 
   @override
+  void initState() {
+  super.initState();
+  _packageNameController.text = widget.editPackage.name;
+  _packageDescriptionController.text = widget.editPackage.description;
+  _packagePrizeController.text = widget.editPackage.prize;
+  category = widget.editPackage.category;
+  _image=XFile(widget.editPackage.imageUrl);
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
-        title: const Center(child: Text("Add Packages")),
+        title: const Center(child: Text("Edit Packages")),
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 15),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -42,7 +49,7 @@ class _AddPackagesState extends State<AddPackages> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: Container(
+      body:  Container(
         padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
         child: SingleChildScrollView(
           child: Form(
@@ -59,16 +66,17 @@ class _AddPackagesState extends State<AddPackages> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: _image == null
-                        ? const Center(
-                            child: Text(
-                              'No image selected',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          )
-                        : Image.file(
-                            File(_image!.path),
-                            fit: BoxFit.cover,
-                          ),
+                    ? const Center(
+                    child: Text(
+                    'No image selected',
+                    style: TextStyle(color: Colors.blue),
+                    ),
+                  )
+                 : Image.file(
+                File(_image!.path),
+               fit: BoxFit.cover,
+               ),
+
                   ),
                 ),
                 const SizedBox(height: 20,),
@@ -191,7 +199,7 @@ class _AddPackagesState extends State<AddPackages> {
                         borderRadius: BorderRadius.circular(20)),
                     child: TextButton(
                       child: const Text(
-                        "Add To Packages",
+                        "Save New changes",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
@@ -212,6 +220,7 @@ class _AddPackagesState extends State<AddPackages> {
                             );
                           } else {
                             final package = Package(
+                              packageId: widget.editPackage.packageId,
                               category: category,
                               imageUrl: _image!.path,
                               name: _packageNameController.text,
@@ -221,14 +230,13 @@ class _AddPackagesState extends State<AddPackages> {
                             );
 
                             final value =
-                                await DatabaseHelper().insertPackge(package);
+                                await DatabaseHelper().updatePackages(package);
                             if (value > 0) {
-                              clearFormFields();
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   backgroundColor: Colors.green,
-                                  content: Text("Successfully added package"),
+                                  content: Text("Successfully Edited  package"),
                                 ),
                               );
                                // ignore: use_build_context_synchronously
@@ -259,7 +267,6 @@ class _AddPackagesState extends State<AddPackages> {
       ),
     );
   }
-
   Widget addPackageFormField({
     required Text labeltext,
     required TextEditingController textController,
@@ -296,26 +303,12 @@ class _AddPackagesState extends State<AddPackages> {
   final image = await imagePicker.pickImage(source: ImageSource.gallery);
 
   if (image != null) {
-    // Check if the file exists before setting the state
     final file = File(image.path);
     if (await file.exists()) {
       setState(() {
         _image = image;
       });
-    } else {
-      // Handle the case where the file doesn't exist
-      debugPrint("Image file does not exist.");
-    }
+    } 
   }
-}
-
-  clearFormFields() {
-    _packageNameController.clear();
-    _packageDescriptionController.clear();
-    _packagePrizeController.clear();
-    setState(() {
-      _image = null;
-      category = '';
-    });
-  }
+} 
 }

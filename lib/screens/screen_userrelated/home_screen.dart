@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/db/db_helper.dart';
+import 'package:travel_app/jasonModel/package.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_about.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_package_related.dart';
 import 'package:travel_app/screens/login_signup/screen_login.dart';
-import 'package:travel_app/screens/models/allmodels.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_plan.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_planned_packages.dart';
 import 'package:travel_app/utils/lists.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,14 +23,28 @@ class _HomeScreenState extends State<HomeScreen> {
 int selectedChipIndex = 0;
 late List<bool> isIconChangedList;
 List<bool> isSelected = List.generate(6, (index) => false);
+List<Package> packages=[];
+List<Package> filterPackage=[];
+
+
+
+
+fetchAllPackages()async{
+  packages= await DatabaseHelper().getAllPackages();
+  setState(() {
+    filterPackage = List.from(packages);
+  });
+}
+
 
   @override
   void initState() {
+    fetchAllPackages();
     super.initState();
     setState(() {
-      selectedChipIndex = 0;
-      isSelected = List.generate(chipLabels.length, (i) => i == 0);
-      isIconChangedList=List.generate(imageUrl[selectedChipIndex].length, (i) => false);
+     isSelected = List.generate(chipLabels.length, (i) => i==selectedChipIndex);
+     selectedChipIndex = 0;
+     filterPackage = List.from(packages);
     });
   }
    
@@ -38,7 +59,7 @@ List<bool> isSelected = List.generate(6, (index) => false);
         actions: const [
           Padding(
             padding: EdgeInsets.only(top: 22, right: 20),
-            child: Text(
+            child: Text( 
               'Trivia',
               style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20),
             ),
@@ -77,12 +98,45 @@ List<bool> isSelected = List.generate(6, (index) => false);
               drawerSection(
                 icon: IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.bookmark, size: 20, color: Colors.white),
+                  icon: const Icon(Icons.add_location, size: 20, color: Colors.white),
+                ),
+                text: const Text('New Tour Plan'),
+                bgcolor: Colors.teal,
+                ontap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenPlan()));
+                },
+              ),
+              drawerSection(
+                icon: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.travel_explore, size: 20, color: Colors.white),
                 ),
                 text: const Text('Planned Packages'),
+                bgcolor: Colors.redAccent,
+                ontap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreePlannedPackages()));
+                },
+              ),
+              drawerSection(
+                icon: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.person_search, size: 20, color: Colors.white),
+                ),
+                text: const Text('About'),
+                bgcolor: Colors.black,
+                ontap: () {
+                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenAbout()));
+                },
+              ),
+              drawerSection(
+                icon: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.share, size: 20, color: Colors.white),
+                ),
+                text: const Text('Share'),
                 bgcolor: Colors.green,
                 ontap: () {
-                  Navigator.of(context).pop();
+                  Share.share("Check Out My Application"); 
                 },
               ),
               drawerSection(
@@ -134,13 +188,16 @@ List<bool> isSelected = List.generate(6, (index) => false);
                        ),
                        backgroundColor: isSelected[index]?Colors.purple[300]: Colors.blue[200],
                      onPressed: () {
-                      setState(() {
+                      filterPackage=packages.where((package) => package.category==chipLabels[index]).toList();
+                     setState(() {
                         if(index==0){
-                        isSelected=List.generate(chipLabels.length, (i) => i==0) ;
-                        selectedChipIndex=0;
+                        isSelected = List.generate(chipLabels.length, (i) => i == index);
+                        filterPackage = List.from(packages); // Show all package
+                        selectedChipIndex=index;
                       }else{
                         selectedChipIndex=index;
                         isSelected=List.generate(chipLabels.length, (i) => i==index) ;
+                        filterPackage = packages.where((package) => package.category == chipLabels[index]).toList();
                       }
                       });
                       
@@ -160,50 +217,23 @@ List<bool> isSelected = List.generate(6, (index) => false);
                   crossAxisSpacing: 5.0,
                   mainAxisSpacing: 5.0,
                     ),
-                    itemCount:imageUrl[selectedChipIndex].length ,
+                    itemCount:filterPackage.length,
                 itemBuilder: (context, index) {
+                 print(filterPackage[index].imageUrl);
                  return Stack(
                  fit: StackFit.passthrough,
                  children: [ClipRRect(
                    borderRadius: BorderRadius.circular(10),
-                   child: GestureDetector(
+                   child: InkWell(
                     onTap: () {
-                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PackageDetails(details: ImageDetails(
-                          imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index]
-                          ),
-                         currentIndex: index,
-                         imagePackageDetails:ImageDetails(
-                          imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index]
-                               
-                          ), 
-                          packageInformation: ImageDetails(
-                          imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index]             
-                           ) ,
-                           packagePrize: ImageDetails(
-                            imageUrl[selectedChipIndex][index],
-                          imagepackagDetails[selectedChipIndex][index],
-                          packageInformation[selectedChipIndex][index],
-                          packageprice[selectedChipIndex][index] 
-                           ),
-                           ),
-                           ),
-                           );
+                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PackageDetails(package: filterPackage[index],),),);
                     },
-                    child: Image.network(imageUrl[selectedChipIndex][index],fit: BoxFit.cover,))
+                    child: Image.file(File(filterPackage[index].imageUrl),fit: BoxFit.cover,))
                    ),
                    Positioned(
                      bottom: 10,
                      left: 5 ,
-                     child:Text(imagepackagDetails[selectedChipIndex][index],
+                     child:Text(filterPackage[index].name,
                      style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
@@ -214,17 +244,17 @@ List<bool> isSelected = List.generate(6, (index) => false);
                       right: 5,
                       bottom: 0,
                       child: IconButton(
+                        
                         onPressed: (){
                         setState(() {
-                          isIconChangedList[index]=!isIconChangedList[index];
+                          
                         });
                       }, 
                       
-                      icon: isIconChangedList[index]? const Icon(
+                      icon:  const Icon(
                         Icons.favorite,
                         color: Colors.red,)
-                        :const Icon(
-                          Icons.favorite_outline,color: Colors.red,))),
+                        )),
                    ]
                  );
                 },

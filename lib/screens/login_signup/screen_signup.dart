@@ -24,13 +24,14 @@ class _SignupScreenState extends State<SignupScreen> {
     
     return null; // Return null for no validation errors
   }
-  final name=TextEditingController();
+  final nameController=TextEditingController();
   String email='';
-  final password=TextEditingController();
-  final confirmPassword=TextEditingController();
+  final emailController=TextEditingController();
+  final passwordController=TextEditingController();
+  final confirmPasswordController=TextEditingController();
   bool _isVisible=false;
   bool _isVisibleone=false;
-   bool _error=false;
+  bool _error=false;
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: name,
+                      controller: nameController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       style:const TextStyle(color: Colors.blue), 
                       decoration: InputDecoration(
@@ -94,13 +95,19 @@ class _SignupScreenState extends State<SignupScreen> {
                       validator:(value) {
                         if(value==null ||value.isEmpty){
                           return 'please enter user name';
+                        }else if(value.length<3){
+                          return "User name must have at least 3 characters";
+                        }
+                        else if(value.contains(' ')){
+                          return "Password Cannot Contain spaces";
                         }
                         return null;
                       },
                     ),
                      const SizedBox(height: 20 ,), 
                      TextFormField(
-                      controller: TextEditingController(),
+                      controller: emailController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       onSaved:(value) {
                         email=value!;
                       },
@@ -125,7 +132,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       validator:(value) {
                         if(value==null ||value.isEmpty){
                           return 'please enter email';
-                        }else if (_validateEmail(value) != null) {
+                        }
+                        else if (_validateEmail(value) != null) {
                          return _validateEmail(value);
                          }
                        
@@ -134,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 20 ,),
                     TextFormField(
-                      controller: password,
+                      controller: passwordController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       obscureText: !_isVisible,
                       style:const TextStyle(color: Colors.blue),
@@ -171,13 +179,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         validator:(value) {
                         if(value==null ||value.isEmpty){
                           return 'please enter password';
+                        }else if(value.contains(' ')){
+                          return "Password Cannot Contain spaces";
                         }
                         return null;
                       },
                     ),
                      const SizedBox(height: 20 ,), 
                     TextFormField(
-                      controller:confirmPassword,
+                      controller:confirmPasswordController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       obscureText: !_isVisibleone,
                       style:const TextStyle(color: Colors.blue),
@@ -214,7 +224,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         validator:(value) {
                         if(value==null ||value.isEmpty){
                           return 'please confirm password';
-                        } else if(password.text!=confirmPassword.text){
+                        } else if(passwordController.text!=confirmPasswordController.text){
                           return  "Passwords doesn't match";
                         }
                         return null;
@@ -234,10 +244,23 @@ class _SignupScreenState extends State<SignupScreen> {
               onPressed: (){
                 if(_formKey.currentState!.validate()){
                        final db = DatabaseHelper();
-                       db.signup(Users(usrName: name.text, usrPassword: password.text,usremail: email,usrConfirmPassword: confirmPassword.text))
+                       db.signup(Users(
+                         usrName: nameController.text,
+                         usrPassword: passwordController.text,
+                         usremail: email,
+                         usrConfirmPassword: confirmPasswordController.text
+                         ),
+                         )
                        .whenComplete((){
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const LoginScreen()));
                        });
+                       ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Welcome To Trivia"),
+                          duration: Duration(seconds: 3),
+                          backgroundColor: Colors.blue,
+                          ),
+                       );
                     }                   
               },
              child:const Text('Sign up',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),)),
