@@ -22,7 +22,7 @@ class ScreenThree extends StatelessWidget {
         child:  Column(
           children: [
            const SizedBox(height: 200,),
-         const Text(' Safe and\n     easy',style: TextStyle(
+         const Text('Welcome To\n      Trivia',style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.bold,
           ),

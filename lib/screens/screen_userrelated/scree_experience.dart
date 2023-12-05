@@ -41,17 +41,17 @@ class _ScreenExperienceState extends State<ScreenExperience> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar:  AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
-        title: Center(child: Text(widget.package.name,)),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.bold),
+        title: Text(widget.package.name),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.black,),
         ),
       ),
       body: Column(
@@ -99,7 +99,9 @@ class _ScreenExperienceState extends State<ScreenExperience> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(experience.experiences),
+                            const SizedBox(height: 5,),
+                                Text("Experience: ${experience.experiences}"),
+                                Text("Expences: ${experience.totalExpences}"),
                                 // Text(experience.totalExpences),
                               ],
                             ),

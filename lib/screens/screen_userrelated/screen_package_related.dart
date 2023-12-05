@@ -21,18 +21,21 @@ class PackageDetails extends StatefulWidget {
 class _PackageDetailsState extends State<PackageDetails> {
   @override
   Widget build(BuildContext context) {
-    print('${widget.package.name}${widget.package.category}');
+    debugPrint('${widget.package.name}${widget.package.category}');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black,size: 20),
-        title:const Center(child: Text("Package Details")),
-        titleTextStyle: const TextStyle(color: Colors.black,fontSize: 15),
+        iconTheme: const IconThemeData(color: Colors.black, size: 20),
+        title: const Text("Package Details"),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(onPressed: (){
-          Navigator.of(context).pop();
-        }, icon:const Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.black,),
+        ),
       ),
       body: ListView(
         children: [
@@ -106,7 +109,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow:  const [
@@ -121,11 +124,11 @@ class _PackageDetailsState extends State<PackageDetails> {
                       borderRadius: BorderRadius.circular(20)
                       ),
                       
-                      height: 50,
+                      height: 50 ,
                       width: 100,
                       child: TextButton(
                         onPressed: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ScreenPlan()));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenPlan()));
                         },
                         child: const Center(child: Text("Plan Now",style: TextStyle(fontWeight: FontWeight.w800),)),
                       ),

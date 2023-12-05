@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,11 +7,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/db/db_helper.dart';
 import 'package:travel_app/jasonModel/package.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_about.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_favourites.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_package_related.dart';
 import 'package:travel_app/screens/login_signup/screen_login.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_plan.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_planned_packages.dart';
 import 'package:travel_app/utils/lists.dart';
+
+ValueNotifier<List<Package>> packageNotifier = ValueNotifier<List<Package>>([]);
+const String favoritesKey="favourites";
+
+Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoritesJson = favorites.map((favorite) => favorite.toMap()).toList();
+    prefs.setStringList(favoritesKey, favoritesJson.map((e) => json.encode(e)).toList());
+  }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,30 +32,86 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 int selectedChipIndex = 0;
-late List<bool> isIconChangedList;
 List<bool> isSelected = List.generate(6, (index) => false);
 List<Package> packages=[];
 List<Package> filterPackage=[];
-
+TextEditingController searchController=TextEditingController();
+List<Package>favourites=[];
+List<bool>selectedIcon=[];
 
 
 
 fetchAllPackages()async{
   packages= await DatabaseHelper().getAllPackages();
+
+  //  List<Package>hardcodedPackages  = [
+  //    Package(
+  //     category: "Hill station", 
+  //     imageUrl: "assets/moon.png",
+  //     name: "Munnar",
+  //     description: "Munnar, nestled in the Western Ghats of Kerala, India, is a picturesque hill station renowned for its lush tea plantations, mist-covered mountains, and serene landscapes. Visitors are captivated by the aromatic tea gardens, diverse flora, and pleasant climate. Munnar offers a tranquil escape, with attractions like Mattupetty Dam and Eravikulam National Park showcasing its natural beauty.",
+  //     prize: "999"
+  //     )
+      
+  //   ];
+  //   packages.addAll(hardcodedPackages);
   setState(() {
     filterPackage = List.from(packages);
+    selectedIcon=List.generate(packages.length,(index)=>false);
   });
 }
 
 
+void handleSearch(String query) {
+  setState(() {
+    if (query.isNotEmpty) {
+      filterPackage = packages
+      .where((package) =>
+      package.name.toLowerCase().contains(query.toLowerCase()))
+     .toList();
+    } else {
+      filterPackage = List.from(packages);
+    }
+  });
+}
+ 
+Future<void> loadFavoritesFromSharedPreferences() async {
+  final prefs = await SharedPreferences.getInstance();
+  final favoritesJson = prefs.getStringList(favoritesKey);
+  if (favoritesJson != null) {
+    final loadedFavorites = favoritesJson.map((jsonString) => Package.fromMap(json.decode(jsonString))).toList();
+    setState(() {
+      packageNotifier.value = loadedFavorites;
+      selectedIcon = List.generate(packages.length, (index) => loadedFavorites.contains(packages[index]));
+    });
+        
+
+  }
+}
+
+Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoritesJson = favorites.map((favorite) => favorite.toMap()).toList();
+    prefs.setStringList(favoritesKey, favoritesJson.map((e) => json.encode(e)).toList());
+  }
+  void removeFromFavorites(Package package) {
+  setState(() {
+    // Update selectedIcon when a package is removed from favorites
+    selectedIcon = List.generate(packages.length, (index) => packageNotifier.value.contains(packages[index]));
+  });
+}
+
   @override
   void initState() {
     fetchAllPackages();
+    loadFavoritesFromSharedPreferences();
     super.initState();
     setState(() {
      isSelected = List.generate(chipLabels.length, (i) => i==selectedChipIndex);
      selectedChipIndex = 0;
      filterPackage = List.from(packages);
+     selectedIcon= List.generate(packages.length, (index) => favourites.contains(packages[index]));
+     
     });
   }
    
@@ -92,7 +159,7 @@ fetchAllPackages()async{
                 text: const Text('Favourites'),
                 bgcolor: Colors.pinkAccent,
                 ontap: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ScreenFavourites(removeFromFavoritesCallback: removeFromFavorites,)));
                 },
               ),
               drawerSection(
@@ -170,9 +237,16 @@ fetchAllPackages()async{
             ),
             const SizedBox(height: 15),
             TextField(
+              controller: searchController,
+              onChanged: (value) {
+                setState(() {
+                  handleSearch(searchController.text);
+                });
+              },
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(15 )),
-                suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.search, size: 28)),
+                suffixIcon: IconButton(onPressed: () {}, 
+                icon: const Icon(Icons.search, size: 28)),
                 hintText: 'search here',
               ),
             ),
@@ -220,6 +294,7 @@ fetchAllPackages()async{
                     itemCount:filterPackage.length,
                 itemBuilder: (context, index) {
                  print(filterPackage[index].imageUrl);
+                 //final img=filterPackage[index];
                  return Stack(
                  fit: StackFit.passthrough,
                  children: [ClipRRect(
@@ -240,21 +315,42 @@ fetchAllPackages()async{
                       fontWeight: FontWeight.w200 
                      ),)
                      ),
-                     Positioned(
-                      right: 5,
-                      bottom: 0,
-                      child: IconButton(
-                        
-                        onPressed: (){
-                        setState(() {
-                          
-                        });
-                      }, 
-                      
-                      icon:  const Icon(
-                        Icons.favorite,
-                        color: Colors.red,)
-                        )),
+                          Positioned(
+                right: 5,
+                bottom: 0,
+                child: ValueListenableBuilder<List<Package>>(
+                  valueListenable: packageNotifier,
+                  builder: (context, packages, _) {
+                    return IconButton(
+                      onPressed: () {
+                       setState(() {
+                        final selectedPackage = filterPackage[index];
+                        final isAlreadyInFavorites = packageNotifier.value.any((p) => p.name == selectedPackage.name);
+
+                       if (selectedIcon[index]) {
+                         // If the item is selected, unselect it and remove from favorites
+                         selectedIcon[index] = false;
+                          packages.remove(selectedPackage);
+                       } else {
+                        // If the item is unselected and not already in favorites, add to favorites
+                         if (!isAlreadyInFavorites) {
+                          selectedIcon[index] = true;
+                           packages.add(selectedPackage);
+                           }
+                        }
+
+                         // Update the ValueNotifier value
+                      packageNotifier.value = List.from(packages);
+                       saveFavoritesToSharedPreferences(packages);
+                    });
+                   },
+                      icon: selectedIcon[index]
+                          ? const Icon(Icons.favorite, color: Colors.red,)
+                          : const Icon(Icons.favorite_border, color: Colors.white,),
+                    );
+                  },
+                ),
+              ),
                    ]
                  );
                 },

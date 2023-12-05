@@ -38,17 +38,18 @@ class _ScreePlannedPackagesState extends State<ScreePlannedPackages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black,size: 20),
-        title:const Center(child: Text("Planned Packages")),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20,),
+      appBar: 
+      AppBar(
+        iconTheme: const IconThemeData(color: Colors.black, size: 20),
+        title: const Text("Planned Packages"),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const HomeScreen()));
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.black,),
         ),
       ),
       body:

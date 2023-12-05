@@ -114,6 +114,7 @@ class _ScreenEditPackagesState extends State<ScreenEditPackages> {
                 ),
                 const SizedBox(height: 20,),
                 DropdownButtonFormField(
+                  value: category,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Choose a Section";

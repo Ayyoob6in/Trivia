@@ -6,3 +6,17 @@ class ImageDetails{
   ImageDetails(this.imageUrl,this.imagepackageDetails,this.packageInformation,this.packagePrize);
   
 }
+
+class Pk {
+  final String name;
+  final String imageUrl;
+  final String category;
+  final String description; 
+
+  Pk({
+    required this.name,
+    required this.imageUrl,
+    required this.category,
+    required this.description,
+  });
+}

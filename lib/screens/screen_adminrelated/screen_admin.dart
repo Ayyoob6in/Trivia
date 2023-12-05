@@ -23,6 +23,8 @@ late List<bool> isIconChangedList;
 List<bool> isSelected = List.generate(7, (index) => false);
 List<Package> packages=[];
 List<Package> filterPackage=[];
+TextEditingController searchController=TextEditingController();
+
 
 fetchAllPackages()async{
   packages= await DatabaseHelper().getAllPackages();
@@ -35,6 +37,18 @@ fetchAllPackages()async{
 delete(int packageId)async{
   await DatabaseHelper().deletePackage(packageId);
   fetchAllPackages();
+}
+void handleSearch(String query) {
+  setState(() {
+    if (query.isNotEmpty) {
+      filterPackage = packages
+      .where((package) =>
+      package.name.toLowerCase().contains(query.toLowerCase()))
+     .toList();
+    } else {
+      filterPackage = List.from(packages);
+    }
+  });
 }
 
 
@@ -135,14 +149,25 @@ delete(int packageId)async{
                 Text('not a clock', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500)),
               ],
             ),
-            // const SizedBox(height: 15), 
-            // TextField(
-            //   decoration: InputDecoration(
-            //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(15 )),
-            //     suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.search, size: 28)),
-            //     hintText: 'search here',
-            //   ),
-            // ),
+           const SizedBox(height: 15),
+            TextField(
+              controller: searchController,
+              onChanged: (value) {
+                setState(() {
+                  handleSearch(searchController.text);
+                });
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15 )),
+                suffixIcon: IconButton(onPressed: () {}, 
+                icon: const Icon(Icons.search, size: 28,)),
+                hintText: 'search here',
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(color: Colors.blue)
+                )
+              ),
+            ),
              SizedBox(
               height: MediaQuery.of(context).size.height*.08,
                child: ListView(

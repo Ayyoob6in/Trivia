@@ -27,15 +27,15 @@ class _ScreenAddExperienceState extends State<ScreenAddExperience> {
       
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
-        title: const Center(child: Text("Add Your Experiences")),
-        titleTextStyle: const TextStyle(color: Colors.black,),
+        title: Text("Add your experience"),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-          Navigator.of(context).pop();
+            Navigator.of(context).pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.black,),
         ),
       ),
     body: Container(
@@ -191,8 +191,8 @@ child: SingleChildScrollView(
                       // ignore: use_build_context_synchronously
                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const HomeScreen()));
                      }
-
-               }
+                    print(widget.pid);
+                   }
                 }else {
                 ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

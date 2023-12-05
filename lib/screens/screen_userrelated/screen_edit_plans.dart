@@ -21,13 +21,14 @@ class _ScreenEditPlansState extends State<ScreenEditPlans> {
   final placeNameController = TextEditingController();
   final dateController=TextEditingController();
   List<String> genders = ["Male", "Female", "Non-Binary", "Other"];
+  String selectedGender = ''; 
 
   @override
   void initState() {
     super.initState();
+    selectedGender = widget.editTourPlan.gender;
     nameController.text=widget.editTourPlan.name;
     ageController.text=widget.editTourPlan.age;
-    genderController.text=widget.editTourPlan.gender;
     placeNameController.text=widget.editTourPlan.placeName;
     dateController.text=widget.editTourPlan.date;
   }
@@ -36,15 +37,15 @@ class _ScreenEditPlansState extends State<ScreenEditPlans> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
-        title: const Center(child: Text("Edit Your Trip Plan")),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 15),
+        title: Text("Edit Your Trip Plan"),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.black,),
         ),
       ),
       body: Container(
@@ -118,6 +119,7 @@ class _ScreenEditPlansState extends State<ScreenEditPlans> {
                           const SizedBox(width: 40),
                           Flexible(
                             child: DropdownButtonFormField(
+                               value:selectedGender,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "Choose Gender";
@@ -152,6 +154,7 @@ class _ScreenEditPlansState extends State<ScreenEditPlans> {
                                 }).toList(),
                                 onChanged: (value) {
                                   setState(() {
+                                    selectedGender=value.toString();
                                     genderController.text = value.toString();
                                   });
                                 }),
@@ -172,8 +175,8 @@ class _ScreenEditPlansState extends State<ScreenEditPlans> {
                                lastDate: DateTime(2101),
                                );
                                if(pickedDate!=null){
-                               String formattDate = DateFormat('yyyy-MM-dd').format(pickedDate); 
-                               setState(() {
+                               String formattDate = DateFormat('dd-MM-yyyy').format(pickedDate); 
+                               setState(() {//yyyy-MM-dd 
                                  dateController.text=formattDate;
                                });
                                }else{

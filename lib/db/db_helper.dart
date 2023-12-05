@@ -175,19 +175,4 @@ Future<void> deleteExperience(int id) async {
 
 
 
-
-
-
-
-
-
-  //Search Method
-  // Future<List<Package>> searchPackage(String keyword) async {
-  //   final Database db = await initDB();
-  //   List<Map<String, Object?>> searchResult = await db
-  //       .rawQuery("select * from packageTable where imagepackagedetails LIKE ?", ["%$keyword%"]);
-  //   return searchResult.map((e) => Package.fromMap(e)).toList();
-  // }
-
-
 }  

@@ -24,17 +24,17 @@ class _ScreenPlanState extends State<ScreenPlan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar:AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
-        title: const Center(child: Text("Plan Your Trip")),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 15),
+        title: Text("Plan Your Trip"),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.black,),
         ),
       ),
       body: Container(
@@ -96,7 +96,7 @@ class _ScreenPlanState extends State<ScreenPlan> {
                       Row(
                         children: <Widget>[
                           bookingField(
-                            label: const Text("Place Name"),
+                            label: const Text("Destination"),
                             validator: (value) {
                               if (value == null||value.isEmpty) {
                                 return "Enter Place Name";
