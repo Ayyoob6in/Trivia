@@ -26,7 +26,8 @@ class _ScreenPlanState extends State<ScreenPlan> {
     return Scaffold(
       appBar:AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
-        title: Text("Plan Your Trip"),
+        title:const Text("Plan Your Trip"),
+        centerTitle: true,
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -158,11 +159,11 @@ class _ScreenPlanState extends State<ScreenPlan> {
                              DateTime? pickedDate = await showDatePicker(
                               context: context,
                                initialDate: DateTime.now(),
-                               firstDate:DateTime(2000), 
+                               firstDate:DateTime.now(), 
                                lastDate: DateTime(2101),
                                );
                                if(pickedDate!=null){
-                               String formattDate = DateFormat('yyyy-MM-dd').format(pickedDate); 
+                               String formattDate = DateFormat('dd-MM-yyyy').format(pickedDate); 
                                setState(() {
                                  dateController.text=formattDate;
                                });
@@ -175,7 +176,7 @@ class _ScreenPlanState extends State<ScreenPlan> {
                               color: Colors.black
                               )
                               ), 
-                          hint:  "YYYY-MM-DD",
+                          hint:  "DD-MM-YYYY",
                           validator: (value){
                           if(value==null||value.isEmpty){
                             return "Choose Date";

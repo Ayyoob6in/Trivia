@@ -270,8 +270,13 @@ Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(15 )),
                 suffixIcon: IconButton(onPressed: () {}, 
-                icon: const Icon(Icons.search, size: 28)),
+                icon: const Icon(Icons.search, size: 28,color: Colors.black54,)),
                 hintText: 'search here',
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide:const BorderSide(color: Colors.black54),
+                  
+                )
               ),
             ),
              SizedBox(
@@ -282,7 +287,8 @@ Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
                    chipLabels.length, (index) =>  Padding(
                      padding:const EdgeInsets.only(left: 5,top: 5),
                      child: ActionChip(
-                      shape:const StadiumBorder(),
+                      shape:const StadiumBorder(side: BorderSide(color: Colors.white)),
+                      elevation: 3,shadowColor: Colors.black,
                        label:Text(chipLabels[index],style: TextStyle(color: isSelected[index]?Colors.white : Colors.black,),
                        ),
                        backgroundColor: isSelected[index]?Colors.purple[300]: Colors.blue[200],
@@ -318,7 +324,7 @@ Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
                     ),
                     itemCount:filterPackage.length,
                 itemBuilder: (context, index) {
-                 print(filterPackage[index].imageUrl);
+                 debugPrint(filterPackage[index].imageUrl);
                  //final img=filterPackage[index];
                  return Stack(
                  fit: StackFit.passthrough,

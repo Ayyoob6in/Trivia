@@ -42,6 +42,7 @@ class _ScreePlannedPackagesState extends State<ScreePlannedPackages> {
       AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
         title: const Text("Planned Packages"),
+        centerTitle: true,
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 17,),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -65,7 +66,7 @@ class _ScreePlannedPackagesState extends State<ScreePlannedPackages> {
             padding: const EdgeInsets.only(left: 20,right: 20,top: 10,bottom: 10),
             child: Container(
               decoration: BoxDecoration(
-               border: Border.all(color: Colors.blue),
+               border: Border.all(color: Colors.white),
                borderRadius: BorderRadius.circular(20),
                color: Colors.blue[100],
                boxShadow: const [

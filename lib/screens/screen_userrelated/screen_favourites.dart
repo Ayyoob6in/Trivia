@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:travel_app/jasonModel/package.dart';
 import 'package:travel_app/screens/screen_userrelated/home_screen.dart';
 
@@ -19,6 +20,7 @@ class _ScreenFavouritesState extends State<ScreenFavourites> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black, size: 20),
         title: const Text("Favourites"),
+        centerTitle: true,
         titleTextStyle: const TextStyle(
           color: Colors.black,
            fontSize: 20, 
@@ -55,9 +57,10 @@ class _ScreenFavouritesState extends State<ScreenFavourites> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white),
                         boxShadow: const [
                           BoxShadow(
-                            blurRadius: 7,
+                            blurRadius: 10,
                           )
                         ]
                       ),
@@ -65,9 +68,11 @@ class _ScreenFavouritesState extends State<ScreenFavourites> {
                       width: MediaQuery.of(context).size.width * 3,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.file(
-                          File(value[index].imageUrl),
-                          fit: BoxFit.cover,
+                        child: InstaImageViewer(
+                          child: Image.file(
+                            File(value[index].imageUrl),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
