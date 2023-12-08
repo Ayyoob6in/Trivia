@@ -18,24 +18,23 @@ class ScreenExperience extends StatefulWidget {
 
 class _ScreenExperienceState extends State<ScreenExperience> {
   List<Experience> _experiences=[];
-
-  fetchAllExperiences()async{
-   List<Experience> experience=await DatabaseHelper().getallExperience();
-   setState(() {
-     _experiences=experience;
-     
-   });
-  }
   delete(int id)async{
     await DatabaseHelper().deleteExperience(id);
-    fetchAllExperiences();
+    fetchExperiencesForPackage(widget.package.packageId !);
   }
+  fetchExperiencesForPackage(int packageId) async {
+  List<Experience> experiences = await DatabaseHelper().getExperiencesForPackage(packageId);
+  setState(() {
+    _experiences = experiences;
+  });
+}
+
   
 
   @override
   void initState() {
     super.initState();
-    fetchAllExperiences();
+    fetchExperiencesForPackage(widget.package.packageId!);
   }
 
   @override

@@ -12,6 +12,8 @@ import 'package:travel_app/screens/screen_userrelated/screen_package_related.dar
 import 'package:travel_app/screens/login_signup/screen_login.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_plan.dart';
 import 'package:travel_app/screens/screen_userrelated/screen_planned_packages.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_privacy.dart';
+import 'package:travel_app/screens/screen_userrelated/screen_weather.dart';
 import 'package:travel_app/utils/lists.dart';
 
 ValueNotifier<List<Package>> packageNotifier = ValueNotifier<List<Package>>([]);
@@ -187,12 +189,34 @@ Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
               drawerSection(
                 icon: IconButton(
                   onPressed: () {},
+                  icon: const Icon(Icons.sunny, size: 20, color: Colors.orange),
+                ),
+                text: const Text('Weather'),
+                bgcolor: Colors.white70,
+                ontap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenWeather()));
+                },
+              ),
+              drawerSection(
+                icon: IconButton(
+                  onPressed: () {},
                   icon: const Icon(Icons.person_search, size: 20, color: Colors.white),
                 ),
                 text: const Text('About'),
                 bgcolor: Colors.black,
                 ontap: () {
                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenAbout()));
+                },
+              ),
+              drawerSection(
+                icon: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.privacy_tip, size: 20, color: Colors.white),
+                ),
+                text: const Text('Privacy Policy'),
+                bgcolor: Colors.orange,
+                ontap: () {
+                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ScreenPrivacy()));
                 },
               ),
               drawerSection(
@@ -258,6 +282,7 @@ Future<void> saveFavoritesToSharedPreferences(List<Package> favorites) async {
                    chipLabels.length, (index) =>  Padding(
                      padding:const EdgeInsets.only(left: 5,top: 5),
                      child: ActionChip(
+                      shape:const StadiumBorder(),
                        label:Text(chipLabels[index],style: TextStyle(color: isSelected[index]?Colors.white : Colors.black,),
                        ),
                        backgroundColor: isSelected[index]?Colors.purple[300]: Colors.blue[200],

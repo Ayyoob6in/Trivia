@@ -118,17 +118,6 @@ Future<int> insertTourplan(TourPlan tourPlan)async{
   });
 }
 
-Future<List<Experience>> getExperiencesForPackage(int packageId) async {
-  final Database exDb = await initDB();
-  List<Map<String, Object?>> result = await exDb.query(
-    "experience",
-    where: 'packageId = ?',
-    whereArgs: [packageId],
-  );
-  return result.map((e) => Experience.fromMap(e)).toList();
-}
-
-
 Future<List<TourPlan>> getallPlans()async{
   final Database newdb = await initDB();
   List<Map<String,Object?>> result = await newdb.query("tourPlan");
@@ -165,6 +154,15 @@ Future<int> insertExperiences(Experience experience)async{
 Future<List<Experience>> getallExperience()async{
   final Database exDb = await initDB();
   List<Map<String,Object?>> result = await exDb.query("experience");
+  return result.map((e) => Experience.fromMap(e)).toList();
+}
+Future<List<Experience>> getExperiencesForPackage(int packageId) async {
+  final Database exDb = await initDB();
+  List<Map<String, Object?>> result = await exDb.query(
+    "experience",
+    where: 'packageId = ?',
+    whereArgs: [packageId],
+  );
   return result.map((e) => Experience.fromMap(e)).toList();
 }
 
